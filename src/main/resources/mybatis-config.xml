@@ -42,6 +42,8 @@
 	<!-- 类型别名 -->
 	<typeAliases>
 		<typeAlias alias="Page" type="com.thinkgem.jeesite.common.persistence.Page" /><!--分页  -->
+		<typeAlias alias="lowerCaseKeyMap" type="com.bns.utils.LowerCaseKeyMap" /><!-- Map key 小写  -->
+		<typeAlias alias="upperCaseKeyMap" type="com.bns.utils.UpperCaseKeyMap" /><!-- Map key 大写 -->
 	</typeAliases>
 	
 	<!-- 插件配置 -->
