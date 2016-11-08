@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 import org.apache.tools.zip.ZipOutputStream;
@@ -621,5 +622,13 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 		}
 		return p;
 	}
+	
+	public static String getAbsolutePath(String urlPath) {
+        if(StringUtils.isBlank(urlPath)) {
+            return "";
+        } else {
+            return SpringContextHolder.getRootRealPath() + urlPath.substring(urlPath.indexOf("/", 1), urlPath.length());
+        }
+    }
 
 }

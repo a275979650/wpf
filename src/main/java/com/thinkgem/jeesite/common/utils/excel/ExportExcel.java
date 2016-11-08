@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.common.utils.excel;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +19,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
@@ -32,11 +37,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.thinkgem.jeesite.common.utils.Encodes;
+import com.thinkgem.jeesite.common.utils.FileUtils;
 import com.thinkgem.jeesite.common.utils.Reflections;
 import com.thinkgem.jeesite.common.utils.excel.annotation.ExcelField;
 import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
@@ -474,4 +481,55 @@ public class ExportExcel {
 //		
 //	}
 
+	
+	/**
+     * 通过模板构造函数
+     * @param title 表格标题，传“空值”，表示无标题
+     * @param headerList 表头数组
+     * @param modle 模板的上级目录
+     *  @param fileName EXCEL模板文件名
+     */
+    public ExportExcel(String title, List<String> headerList,String modle,String fileName) {
+        String dir = FileUtils.getAbsolutePath(modle+"/WEB-INF/model/"+modle+"/"+fileName);
+        FileObject template = null;
+        InputStream is = null;
+        try {
+            //获取默认的空白excel文档模板的文件对象
+            FileSystemManager fsmWrapped=VFS.getManager();;
+             template = fsmWrapped.resolveFile(dir);
+             is = template.getContent().getInputStream();
+            //读取模板文件，放入文件流，生成工作簿对象
+            this.wb = new SXSSFWorkbook(new XSSFWorkbook(is));
+            this.sheet = wb.getSheetAt(0);
+            this.styles = createStyles(wb);
+            
+            template.close();
+        } catch (Exception e) {
+            log.error("模板获取失败，文件路径："+dir);
+        }finally{
+            IOUtils.closeQuietly(is);
+        }
+        initialize(title,headerList);
+    }
+    /**
+     * 添加数据（通过annotation.ExportField添加数据）
+     * @return list 数据列表
+     */
+    public  ExportExcel setDataList(List<Map<String,Object>> list,String[] colName){
+        for (Map<String,Object> e : list){
+            int colunm = 0;
+            Row row = this.addRow();
+            StringBuilder sb = new StringBuilder();
+            for (String n : colName){
+                Object val = e.get(n);
+                this.addCell(row, colunm++, val, 2,String.class);
+                sb.append(val + ", ");
+            }
+            log.debug("Write success: ["+row.getRowNum()+"] "+sb.toString());
+        }
+        return this;
+    }
+    public void setRownum(int rownum) {
+        this.rownum = rownum;
+    }
 }
