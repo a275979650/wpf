@@ -1,0 +1,1 @@
+Copyright &copy; ${fns:getConfig('copyrightYear')} <a href="${pageContext.request.contextPath}${fns:getFrontPath()}">${fns:getConfig('productName')}</a> - Powered By <a href="${fns:getConfig('companyURL')}" target="_blank">${fns:getConfig('companyName')}</a> ${fns:getConfig('version')}
