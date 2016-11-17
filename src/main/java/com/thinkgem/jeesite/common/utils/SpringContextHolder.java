@@ -3,6 +3,7 @@
  */
 package com.thinkgem.jeesite.common.utils;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
@@ -104,4 +105,14 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	private static void assertContextInjected() {
 		Validate.validState(applicationContext != null, "applicaitonContext属性未注入, 请在applicationContext.xml中定义SpringContextHolder.");
 	}
+	
+	public static String getRootRealPath(){
+        String rootRealPath ="";
+        try {
+            rootRealPath=getApplicationContext().getResource("").getFile().getAbsolutePath();
+        } catch (IOException e) {
+            logger.warn("获取系统根目录失败");
+        }
+        return rootRealPath;
+    }
 }
