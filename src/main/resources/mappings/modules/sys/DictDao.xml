@@ -92,4 +92,9 @@
 		WHERE id = #{id}
 	</update>
 	
+	<select id="findBillLabelList" resultType="map">
+		SELECT t.LABEL_ID ID,t.LABEL_NAME NAME, t.PARENT_LABEL pid 
+		FROM CD_LABEL t WHERE ENABLE = '1' ORDER BY t.SORT_NO
+	</select>
+	
 </mapper>

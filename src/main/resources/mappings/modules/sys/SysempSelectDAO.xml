@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.sys.dao.SysempSelectDAO">
+	 
+	 <select id="listEmployee" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT S.NAME DEPT_NAME,t.OFFICE_ID DEPT_ID, t.LOGIN_NAME EMPLOYEE_ID,t.name, 
+		'' duty, '' status FROM SYS_USER t
+		LEFT JOIN SYS_OFFICE S ON S.ID = t.OFFICE_ID
+		<where>
+			<if test="NAME !=null and NAME !=''">
+				AND ((t.NAME like '%' || #{NAME} || '%') OR (t.sid like '%' || #{NAME} || '%') )
+			</if> 
+			<if test="DEPT_ID !=null and DEPT_ID !=''">
+				AND t.OFFICE_ID = #{DEPT_ID}
+			</if>
+		</where>
+		<choose>
+			<when test="SORTVALUE !=null and SORTVALUE !=''">
+				ORDER BY case when t.LOGIN_NAME = #{SORTVALUE} then 0 else 1 end  
+			</when>
+			<otherwise>
+				ORDER BY t.LOGIN_NAME
+			</otherwise>
+		</choose>
+	</select>
+	
+</mapper>

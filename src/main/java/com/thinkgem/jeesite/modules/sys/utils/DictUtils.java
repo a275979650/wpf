@@ -15,6 +15,7 @@ import com.thinkgem.jeesite.common.utils.CacheUtils;
 import com.thinkgem.jeesite.common.utils.SpringContextHolder;
 import com.thinkgem.jeesite.modules.sys.dao.DictDao;
 import com.thinkgem.jeesite.modules.sys.entity.Dict;
+import com.thinkgem.jeesite.modules.sys.entity.Office;
 
 /**
  * 字典工具类
@@ -91,4 +92,42 @@ public class DictUtils {
 		return JsonMapper.toJsonString(getDictList(type));
 	}
 	
+public static String getOfficeLabelBySeparator(String value,String separator, String defaultValue){
+        
+        StringBuffer label = new StringBuffer(100);
+        
+        if (StringUtils.isNotBlank(value)){
+            String[] values = StringUtils.split(value,(StringUtils.isEmpty(separator)?",":separator));
+            List<Office>  office = UserUtils.getOfficeAllList();
+            for (String val : values) {
+                for (Office dict : office){
+                    if (StringUtils.equals(dict.getId(), val)){
+                        label.append(dict.getName()).append(",");
+                        break;
+                    }
+                }
+            }
+        }
+        if (label.length()>0) {
+            label.deleteCharAt(label.length()-1);
+        }
+        
+        return (label.toString().length() > 0 ? label.toString() : defaultValue);
+    }
+    /**
+     *根据部门名称查id
+     * @param name
+     * @return
+     */
+    public static String getOfficeIdByName(String name, String defaultValue){
+        List<Office> list = UserUtils.getOfficeAllList();
+        for(Office office:list){
+            String deptName = office.getName();
+            if(name.equals(deptName)){
+               return office.getId();
+            }
+        }
+        return defaultValue;
+    }
+
 }

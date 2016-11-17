@@ -244,4 +244,25 @@
     <example>${fns:toJson(object)}</example>  
   </function>
   
+  <function>
+    <description>格式化日期</description>
+    <name>formatDate</name>
+    <function-class>com.thinkgem.jeesite.common.utils.DateUtils</function-class>
+    <function-signature>java.lang.String formatDate2(java.util.Date, java.lang.String)</function-signature>
+    <example>${fns:formatDate(date, pattern)}</example>  
+  </function>
+  <function>
+    <description>获取账单标签显示值(多标签，由分隔符分开)</description>
+    <name>getBillLabelBySeparator</name>
+    <function-class>com.thinkgem.jeesite.modules.sys.utils.BillDictUtils</function-class>
+    <function-signature>java.lang.String getBillLabelBySeparator(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getBillLabelBySeparator(value, separator,defaultValue)}</example>  
+  </function>
+  <function>
+    <description>获取单位显示值(多标签，由分隔符分开)</description>
+    <name>getOfficeLabelBySeparator</name>
+    <function-class>com.thinkgem.jeesite.modules.sys.utils.DictUtils</function-class>
+    <function-signature>java.lang.String getOfficeLabelBySeparator(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getOfficeLabelBySeparator(value, separator,defaultValue)}</example>  
+  </function>
 </taglib>
