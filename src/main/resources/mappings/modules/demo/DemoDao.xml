@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.demo.dao.DemoDao">
+	<select id="list" parameterType="map" resultType="upperCaseKeyMap">
+		select t.* from T_COMM_BASE_INFO t
+		<where>
+			<if test="SID != null and SID !=''">
+			  AND	(t.SID like '%' || #{SID} || '%' or t.NAME like '%' || #{SID} || '%')
+			</if>
+			<if test="DEPT_ID != null and DEPT_ID !=''">
+				AND t.DEPT_ID = #{DEPT_ID}
+			</if>
+			<if test="STAFF_SORT != null and STAFF_SORT !=''">
+				AND t.STAFF_SORT = #{STAFF_SORT}
+			</if>
+		</where>
+		order by t.SID
+	</select>
+	
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.comm.dao.ImportDataDao">
+
+	<select id="getTableInfo" parameterType="map" resultType="upperCaseKeyMap">
+		select * from T_COMM_IMPORT_TABLE where table_id = #{dicId}
+	</select>
+	
+	<select id="listFieldInfo" parameterType="map" resultType="upperCaseKeyMap">
+		select * from t_comm_import_field where table_id = #{dicId} order by sort_no
+	</select>
+	
+	<select id="getRequiredField" parameterType="map" resultType="upperCaseKeyMap">
+		select * from t_comm_import_field where table_id = #{dicId} and
+		required = 1 order by sort_no
+	</select>
+	
+	<select id="getRequiredFieldString" parameterType="map"
+		resultType="upperCaseKeyMap">
+		select wm_concat(FIELD_NAME) AS required_field from
+		t_comm_import_field
+		where REQUIRED = '1' AND TABLE_id = #{dicId}
+	</select>
+	
+	<select id="getTemplateFieldList" parameterType="map"
+		resultType="upperCaseKeyMap">
+		select * from t_comm_import_field where table_id = #{dicId}
+		and field_id in (${fields}) order by sort_no
+	</select>
+	
+	<select id="findFieldByCHName" parameterType="map" resultType="upperCaseKeyMap">
+		select * from t_comm_import_field where table_id = #{dicId} and
+		field_name = #{name}
+	</select>
+	
+	<select id="getEntity" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT t.* FROM ${dicId} t WHERE ${uqString}
+	</select>
+	
+	<insert id="insertImportResult" parameterType="map">
+		insert into T_COMM_IMPORT_RESULT(
+		<trim prefix="" suffixOverrides=",">
+			IMPORT_ID,IMPORT_DATE,
+			<if test="USER_ID != null ">USER_ID, </if>
+			<if test="USER_NAME != null ">USER_NAME, </if>
+			<if test="IMPORT_RESULT != null ">IMPORT_RESULT, </if>
+			<if test="SUCCESS_FLAG != null ">SUCCESS_FLAG, </if>
+			<if test="DIC_ID != null ">TABLE_ID, </if>
+			REDO_FLAG,
+		</trim>
+	    <![CDATA[ ) values( ]]>
+		<trim prefix="" suffixOverrides=",">
+			#{IMPORT_ID},SYSDATE,
+			<if test="USER_ID != null ">#{USER_ID}, </if>
+			<if test="USER_NAME != null ">#{USER_NAME}, </if>
+			<if test="IMPORT_RESULT != null ">#{IMPORT_RESULT}, </if>
+			<if test="SUCCESS_FLAG != null ">#{SUCCESS_FLAG}, </if>
+			<if test="DIC_ID != null ">#{DIC_ID}, </if>
+			0,
+		</trim>
+	    <![CDATA[ ) ]]>
+	</insert>
+
+	<insert id="insertImportBatch" parameterType="list">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			insert into T_COMM_BASE_INFO(
+			<trim prefix="" suffixOverrides=",">
+				ID,
+				<if test="item.NAME != null ">NAME, </if>
+				<if test="item.SID != null ">SID, </if>
+				<if test="item.ID_CODE != null ">ID_CODE,</if>
+				<if test="item.DEPT_ID != null ">DEPT_ID, </if>
+				<if test="item.STATUS != null ">STATUS, </if>
+				<if test="item.STAFF_SORT != null ">STAFF_SORT, </if>
+				<if test="item.POST_NAME != null ">POST_NAME, </if>
+				<if test="item.WORK_DATE != null ">WORK_DATE, </if>
+				<if test="item.INSCHOOL_DATE != null ">INSCHOOL_DATE, </if>
+				<if test="item.HIGH_SCH != null ">HIGH_SCH, </if>
+				<if test="item.MOBILE_PHONE != null ">MOBILE_PHONE, </if>
+				<if test="item.EMAIL != null ">EMAIL, </if>
+			</trim>
+		    <![CDATA[ ) values( ]]>
+			<trim prefix="" suffixOverrides=",">
+				#{item.ID},
+				<if test="item.NAME != null ">#{item.NAME}, </if>
+				<if test="item.SID != null ">#{item.SID}, </if>
+				<if test="item.ID_CODE != null ">#{item.ID_CODE}, </if>
+				<if test="item.DEPT_ID != null ">#{item.DEPT_ID}, </if>
+				<if test="item.STATUS != null ">#{item.STATUS}, </if>
+				<if test="item.STAFF_SORT != null ">#{item.STAFF_SORT}, </if>
+				<if test="item.POST_NAME != null ">#{item.POST_NAME}, </if>
+				<if test="item.WORK_DATE != null ">TO_DATE(#{item.WORK_DATE},'YYYY-MM-DD'), </if>
+				<if test="item.INSCHOOL_DATE != null ">to_date(#{item.INSCHOOL_DATE},'YYYY-MM-DD'), </if>
+				<if test="item.HIGH_SCH != null ">#{item.HIGH_SCH}, </if>
+				<if test="item.MOBILE_PHONE != null ">#{item.MOBILE_PHONE}, </if>
+				<if test="item.EMAIL != null ">#{item.EMAIL}, </if>
+			</trim>
+		    <![CDATA[ ) ]]>
+		</foreach>
+	</insert>
+
+	<update id="updateImportBatch" parameterType="list">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			UPDATE T_COMM_BASE_INFO t SET t.SID=#{item.SID}
+			<if test="item.NAME != null and item.NAME != ''">,t.NAME=#{item.NAME}</if>
+			<if test="item.ID_CODE != null and item.ID_CODE != ''">,t.ID_CODE=#{item.ID_CODE}</if>
+			<if test="item.DEPT_ID != null and item.DEPT_ID != ''">,t.DEPT_ID=#{item.DEPT_ID}</if>
+			<if test="item.STATUS != null and item.STATUS != ''">,t.STATUS=#{item.STATUS}</if>
+			<if test="item.STAFF_SORT != null and item.STAFF_SORT != ''">,t.STAFF_SORT=#{item.STAFF_SORT}</if>
+			<if test="item.POST_NAME != null and item.POST_NAME != ''">,t.POST_NAME=#{item.POST_NAME}</if>
+			<if test="item.WORK_DATE != null and item.WORK_DATE != ''">
+				,t.WORK_DATE=to_date(#{item.WORK_DATE},'yyyy-mm-dd')
+			</if>
+			<if test="item.INSCHOOL_DATE != null and item.INSCHOOL_DATE != ''">
+				,t.INSCHOOL_DATE=to_date(#{item.INSCHOOL_DATE},'yyyy-mm-dd')
+			</if>
+			<if test="item.HIGH_SCH != null and item.HIGH_SCH != ''">,t.HIGH_SCH=#{item.HIGH_SCH}</if>
+			<if test="item.MOBILE_PHONE != null and item.MOBILE_PHONE != ''">,t.MOBILE_PHONE=#{item.MOBILE_PHONE}</if>
+			<if test="item.EMAIL != null and item.EMAIL != ''">,t.EMAIL=#{item.EMAIL}</if>
+			where ID=#{item.ID}
+		</foreach>
+	</update>
+
+	<select id="listHistory" parameterType="map" resultType="upperCaseKeyMap">
+	     <![CDATA[
+		 select t.*, to_char(t.IMPORT_DATE,'yyyy-MM-dd hh24:mi:ss') IMPORT_DATE_STR,
+		   DECODE(SUCCESS_FLAG,'1','成功','0','失败') AS SUCCESS_FLAG_NAME,
+		   a.table_name AS DIC_ID_NAME
+		   from T_COMM_IMPORT_RESULT t 
+		   left join T_COMM_IMPORT_TABLE a on a.table_id = t.table_id
+		    ]]> 
+		  <where>
+			<if test="DIC_ID != null and DIC_ID != ''">
+				and t.DIC_ID = #{DIC_ID}
+			</if>
+			<if test="USER_NAME != null and USER_NAME != ''">
+				and (t.USER_ID LIKE '%' || #{USER_NAME} || '%' OR t.USER_NAME LIKE '%' #{USER_NAME} || '%' )
+			</if>
+			<if test="BEGIN_TIME != null and BEGIN_TIME != ''">
+				and t.IMPORT_DATE &gt;= to_date(#{BEGIN_TIME}, 'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="END_TIME != null and END_TIME != ''">
+				and t.IMPORT_DATE &lt;= to_date(#{END_TIME}, 'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="SUCCESS_FLAG != null and SUCCESS_FLAG != ''">
+				and t.SUCCESS_FLAG = #{SUCCESS_FLAG}
+			</if>
+		  </where>
+		  order by t.IMPORT_DATE DESC
+	</select>
+	
+</mapper>

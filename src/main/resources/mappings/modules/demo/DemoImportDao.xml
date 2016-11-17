@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.wage.BasicSalaryInformation.dao.BasicSalaryImportDao">
+
+	<select id="getGroupList" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT * FROM T_WAGE_GROUP WHERE status = 1
+	</select>
+	
+	<select id="getGroupItemList" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT i.ITEM_ID,i.ITEM_NAME FROM T_WAGE_GROUP_ITEM c LEFT JOIN T_WAGE_ITEM i ON c.ITEM_ID = i.ITEM_ID 
+		WHERE i.status = 1 AND c.GROUP_ID = #{GROUP_ID}
+		ORDER BY i.SORT_NUM
+	</select>
+	
+	<select id="getFundList" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT fund_name,wage_fund_id FROM T_WAGE_FUND_SOURCE WHERE del_flag = 0
+	</select>
+	
+	<select id="getStandNum" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT * FROM T_WAGE_STAND WHERE item_id = #{ITEM_ID}
+		<if test="MONEY != null and MONEY != ''"> AND MONEY = #{MONEY}</if>
+	</select>
+	
+	<select id="getBase" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT * FROM V_WAGE_BASE_INFO WHERE SID = #{EMPLOYEE_ID}
+	</select>
+	
+	<update id="updateBase" parameterType="map">
+		UPDATE T_WAGE_BASE_INFO t SET t.EMPLOYEE_ID = #{SID} 
+			<if test="GROUP_ID != null and GROUP_ID != ''">
+				,t.GROUP_ID = #{GROUP_ID} 
+			</if>
+			<if test="FLAG_STATUS != null and FLAG_STATUS != ''">
+				,t.FLAG_WAGE = #{FLAG_STATUS} 
+			</if>
+		WHERE t.RES_ID = #{RES_ID}
+	</update>
+	
+	<insert id="insertBase" parameterType="map">
+		insert into T_WAGE_BASE_INFO t(RES_ID,EMPLOYEE_ID,GROUP_ID,FLAG_WAGE,S_PAY_DATE)
+	    SELECT SEQ_T_WAGE_BASE_INFO.NEXTVAL,#{SID}, #{GROUP_ID},#{FLAG_STATUS},SYSDATE FROM DUAL
+	</insert>
+	
+	<delete id="deleteItem" parameterType="map" >
+		delete T_WAGE_STAND_STAFF WHERE employee_id = #{employeeId}
+	</delete>
+	
+	<insert id="insertStandItem" parameterType="list">
+		INSERT INTO T_WAGE_STAND_STAFF(stand_num,employee_id,wage_FUND_id,money)
+		<foreach collection="list" item="item" index="index" separator="union all">
+			select #{item.STAND_NUM} STAND_NUM, #{item.EMPLOYEE_ID} EMPLOYEE_ID,
+			#{item.WAGE_FUND_ID} WAGE_FUND_ID, #{item.MONEY} MONEY from dual
+		</foreach>
+	</insert>
+	
+	<insert id="insertImportResult" parameterType="map">
+		insert into T_COMM_IMPORT_RESULT(
+		<trim prefix="" suffixOverrides=",">
+			IMPORT_ID,IMPORT_DATE,
+			<if test="USER_ID != null ">USER_ID, </if>
+			<if test="USER_NAME != null ">USER_NAME, </if>
+			<if test="IMPORT_RESULT != null ">IMPORT_RESULT, </if>
+			<if test="SUCCESS_FLAG != null ">SUCCESS_FLAG, </if>
+			<if test="DIC_ID != null ">TABLE_ID, </if>
+			REDO_FLAG,
+		</trim>
+	    <![CDATA[ ) values( ]]>
+		<trim prefix="" suffixOverrides=",">
+			<if test="IMPORT_ID != null ">#{IMPORT_ID}, </if>
+			<if test="IMPORT_ID == null ">SEQ_T_COMM_IMPORT_RESULT.nextval,</if>
+			SYSDATE,
+			<if test="USER_ID != null ">#{USER_ID}, </if>
+			<if test="USER_NAME != null ">#{USER_NAME}, </if>
+			<if test="IMPORT_RESULT != null ">#{IMPORT_RESULT}, </if>
+			<if test="SUCCESS_FLAG != null ">#{SUCCESS_FLAG}, </if>
+			<if test="DIC_ID != null ">#{DIC_ID}, </if>
+			0,
+		</trim>
+	    <![CDATA[ ) ]]>
+	</insert>
+
+	<select id="getImportId" parameterType="map" resultType="upperCaseKeyMap">
+		select to_char(SEQ_T_COMM_IMPORT_RESULT.nextval) as import_id from dual
+	</select>
+	<select id="getList" parameterType="map" resultType="upperCaseKeyMap">
+	select t.* from t_wage_group t
+	</select>
+	
+</mapper>
