@@ -310,11 +310,13 @@ public class User extends DataEntity<User> {
 	}
 	
 	public boolean isAdmin(){
-		return isAdmin(this.id);
+	    return Global.getConfig("adminId").indexOf(this.id+",")>=0;
+		//return isAdmin(this.id);
 	}
 	
 	public static boolean isAdmin(String id){
-		return id != null && "1".equals(id);
+	    return Global.getConfig("adminId").indexOf(id+",")>=0;
+		//return id != null && "1".equals(id);
 	}
 	
 	@Override
