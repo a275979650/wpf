@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.bill.dao.ReportDao">
+	<select id="monthTotalList" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT to_char(t.CONSUME_TIME, 'yyyy-mm') MONTH, 
+		NVL(max(r.VALUE),0) red, max(r.remark) remark, max(r.explain) explain,
+		SUM(DECODE(t.CONSUME_TYPE,1,t.AMOUNT,0)) income,
+		SUM(DECODE(t.CONSUME_TYPE,2,t.AMOUNT,0)) outcost,
+		SUM(DECODE(t.CONSUME_TYPE,1,t.AMOUNT,0)) - SUM(DECODE(t.CONSUME_TYPE,2,t.AMOUNT,0)) total
+		FROM CD_BILL t LEFT JOIN CD_RED_LINE r ON r.MONTH = to_char(t.CONSUME_TIME, 'yyyy-mm') 
+		<where>
+			<if test="CONSUME_TYPE != null and CONSUME_TYPE !=''">
+				AND t.CONSUME_TYPE = #{CONSUME_TYPE}
+			</if>
+			<if test="BLONG != null and BLONG !=''">
+				AND t.BLONG = #{BLONG}
+			</if>
+			<if test="LABEL != null and LABEL !=''">
+				AND t.LABEL = #{LABEL}
+			</if>
+			<if test="BEGIN_DATE != null and BEGIN_DATE !=''">
+			  AND t.CONSUME_TIME >= TO_DATE(#{BEGIN_DATE},'yyyy-MM-dd') 
+			</if>
+			<if test="END_DATE != null and END_DATE !=''">
+			  AND t.CONSUME_TIME <![CDATA[<=]]> TO_DATE(#{END_DATE},'yyyy-MM-dd') 
+			</if>
+		</where>
+		GROUP BY to_char(t.CONSUME_TIME, 'yyyy-mm') 
+		ORDER BY to_char(t.CONSUME_TIME, 'yyyy-mm') DESC
+	</select>
+	
+	<select id="statistical" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT COUNT(1) as record, sum(x.income) total_in, ROUND(avg(x.income),2) avg_in,
+	    sum(x.outcost) total_out, ROUND(avg(x.outcost),2) avg_out, max(x.outcost) max_out, 
+	    sum(x.red) beyond, SUM(x.total) total
+		from(SELECT to_char(t.CONSUME_TIME, 'yyyy-mm') MONTH, 
+		case when r.VALUE>0 and SUM(DECODE(t.CONSUME_TYPE,2,t.AMOUNT,0))>r.VALUE 
+		then SUM(DECODE(t.CONSUME_TYPE,2,t.AMOUNT,0)) - r.VALUE else 0 end red, r.remark,
+		SUM(DECODE(t.CONSUME_TYPE,1,t.AMOUNT,0)) income,
+		SUM(DECODE(t.CONSUME_TYPE,2,t.AMOUNT,0)) outcost,
+		SUM(DECODE(t.CONSUME_TYPE,1,t.AMOUNT,0)) - SUM(DECODE(t.CONSUME_TYPE,2,t.AMOUNT,0)) total
+		FROM CD_BILL t LEFT JOIN CD_RED_LINE r ON r.MONTH = to_char(t.CONSUME_TIME, 'yyyy-mm') 
+		<where>
+			<if test="CONSUME_TYPE != null and CONSUME_TYPE !=''">
+				AND t.CONSUME_TYPE = #{CONSUME_TYPE}
+			</if>
+			<if test="BLONG != null and BLONG !=''">
+				AND t.BLONG = #{BLONG}
+			</if>
+			<if test="LABEL != null and LABEL !=''">
+				AND t.LABEL = #{LABEL}
+			</if>
+			<if test="BEGIN_DATE != null and BEGIN_DATE !=''">
+			  AND t.CONSUME_TIME >= TO_DATE(#{BEGIN_DATE},'yyyy-MM-dd') 
+			</if>
+			<if test="END_DATE != null and END_DATE !=''">
+			  AND t.CONSUME_TIME <![CDATA[<=]]> TO_DATE(#{END_DATE},'yyyy-MM-dd') 
+			</if>
+		</where>
+		GROUP BY to_char(t.CONSUME_TIME, 'yyyy-mm'),r.VALUE,r.remark
+		ORDER BY to_char(t.CONSUME_TIME, 'yyyy-mm') DESC) x
+	</select>
+	
+	<select id="monthLabelTotal" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT t.LABEL,l.LABEL_NAME,l.SORT_NO,
+		SUM(DECODE(t.CONSUME_TYPE,1,t.AMOUNT,0-t.AMOUNT)) total   
+		FROM cd_bill t LEFT JOIN cd_label l ON l.LABEL_ID = t.LABEL
+		<where>
+			<if test="ITEM != null and ITEM !=''"> AND t.ITEM like '%' || #{ITEM} || '%' </if>
+			<if test="PLACE != null and PLACE !=''"> AND t.PLACE like '%' || #{PLACE} || '%' </if>
+			<if test="CONSUME_TYPE != null and CONSUME_TYPE !=''"> AND t.CONSUME_TYPE = #{CONSUME_TYPE} </if>
+			<if test="LABEL != null and LABEL !=''"> AND t.LABEL = #{LABEL} </if>
+			<if test="BEGIN_TIME != null and BEGIN_TIME !=''">
+				<![CDATA[ AND t.CONSUME_TIME >= to_date(#{BEGIN_TIME},'yyyy-MM-dd') ]]> 
+			</if>
+			<if test="END_TIME != null and END_TIME !=''">
+				<![CDATA[ AND t.CONSUME_TIME <= to_date(#{END_TIME},'yyyy-MM-dd') ]]> 
+			</if>
+			<if test="MONTH != null and MONTH !=''">
+				AND to_char(t.CONSUME_TIME,'yyyy-MM') = #{MONTH} 
+			</if>
+			<if test="PAY_WAY != null and PAY_WAY !=''"> AND t.PAY_WAY = #{PAY_WAY} </if>
+			<if test="BLONG != null and BLONG !=''"> AND t.BLONG = #{BLONG} </if>
+		</where>
+		GROUP BY t.LABEL,l.LABEL_NAME,l.SORT_NO
+    	ORDER BY l.SORT_NO
+	</select>
+	
+</mapper>

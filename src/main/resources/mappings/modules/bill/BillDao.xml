@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.bill.dao.BillDao">
+	<select id="list" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT t.*, l.LABEL_NAME 
+		FROM cd_bill t LEFT JOIN cd_label l ON l.LABEL_ID = t.LABEL
+		<where>
+			<if test="ITEM != null and ITEM !=''"> AND t.ITEM like '%' || #{ITEM} || '%' </if>
+			<if test="PLACE != null and PLACE !=''"> AND t.PLACE like '%' || #{PLACE} || '%' </if>
+			<if test="CONSUME_TYPE != null and CONSUME_TYPE !=''"> AND t.CONSUME_TYPE = #{CONSUME_TYPE} </if>
+			<if test="LABEL != null and LABEL !=''"> AND t.LABEL = #{LABEL} </if>
+			<if test="BEGIN_TIME != null and BEGIN_TIME !=''">
+				<![CDATA[ AND t.CONSUME_TIME >= to_date(#{BEGIN_TIME},'yyyy-MM-dd') ]]> 
+			</if>
+			<if test="END_TIME != null and END_TIME !=''">
+				<![CDATA[ AND t.CONSUME_TIME <= to_date(#{END_TIME},'yyyy-MM-dd') ]]> 
+			</if>
+			<if test="MONTH != null and MONTH !=''">
+				AND to_char(t.CONSUME_TIME,'yyyy-MM') = #{MONTH} 
+			</if>
+			<if test="PAY_WAY != null and PAY_WAY !=''"> AND t.PAY_WAY = #{PAY_WAY} </if>
+			<if test="BLONG != null and BLONG !=''"> AND t.BLONG = #{BLONG} </if>
+		</where>
+		order by t.CONSUME_TIME DESC
+	</select>
+	<select id="statistical" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT sum(DECODE(t.CONSUME_TYPE,1,t.AMOUNT,0)) income, sum(DECODE(t.CONSUME_TYPE,2,t.AMOUNT,0)) outpay 
+		FROM cd_bill t LEFT JOIN cd_label l ON l.LABEL_ID = t.LABEL
+		<where>
+			<if test="ITEM != null and ITEM !=''"> AND t.ITEM like '%' || #{ITEM} || '%' </if>
+			<if test="PLACE != null and PLACE !=''"> AND t.PLACE like '%' || #{PLACE} || '%' </if>
+			<if test="CONSUME_TYPE != null and CONSUME_TYPE !=''"> AND t.CONSUME_TYPE = #{CONSUME_TYPE} </if>
+			<if test="LABEL != null and LABEL !=''"> AND t.LABEL = #{LABEL} </if>
+			<if test="BEGIN_TIME != null and BEGIN_TIME !=''">
+				<![CDATA[ AND t.CONSUME_TIME >= to_date(#{BEGIN_TIME},'yyyy-MM-dd') ]]> 
+			</if>
+			<if test="END_TIME != null and END_TIME !=''">
+				<![CDATA[ AND t.CONSUME_TIME <= to_date(#{END_TIME},'yyyy-MM-dd') ]]> 
+			</if>
+			<if test="MONTH != null and MONTH !=''">
+				AND to_char(t.CONSUME_TIME,'yyyy-MM') = #{MONTH} 
+			</if>
+			<if test="PAY_WAY != null and PAY_WAY !=''"> AND t.PAY_WAY = #{PAY_WAY} </if>
+			<if test="BLONG != null and BLONG !=''"> AND t.BLONG = #{BLONG} </if>
+		</where>
+	</select>
+	
+	<select id="get" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT * from cd_bill t
+		<where>
+			GUUID=#{numId}
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="string" >
+		   DELETE cd_bill
+		   WHERE GUUID=#{numId}
+	 </delete>
+	
+	<insert id="insert" parameterType="map">
+	   INSERT INTO cd_bill(
+	      <trim prefix=""  suffixOverrides=",">
+	      	 GUUID,
+             <if test="CONSUME_TIME != null ">CONSUME_TIME, </if>
+             <if test="CONSUME_TYPE != null ">CONSUME_TYPE, </if>
+             <if test="AMOUNT != null ">AMOUNT, </if>
+             <if test="ITEM != null ">ITEM, </if>
+             <if test="PLACE != null">PLACE, </if>
+			 <if test="LABEL != null">LABEL, </if>
+			 <if test="BLONG != null">BLONG, </if>
+			 <if test="BLONG_NAME != null">BLONG_NAME, </if>
+			 <if test="PAY_WAY != null">PAY_WAY, </if>
+			 <if test="CREATE_DATE != null">CREATE_DATE, </if>
+			 <if test="CREATE_BY != null">CREATE_BY, </if>
+			 <if test="REMARK != null">REMARK, </if>
+			 <if test="IMAGE != null">IMAGE, </if>
+           </trim>
+	    <![CDATA[ ) values( ]]> 
+	       <trim prefix=""  suffixOverrides=",">
+	       	#{GUUID},
+             <if test="CONSUME_TIME != null ">TO_DATE(#{CONSUME_TIME},'YYYY-MM-DD HH24:MI:SS'), </if>
+             <if test="CONSUME_TYPE != null ">#{CONSUME_TYPE}, </if>
+             <if test="AMOUNT != null ">#{AMOUNT}, </if>
+             <if test="ITEM != null ">#{ITEM}, </if>
+             <if test="PLACE != null">#{PLACE}, </if>
+             <if test="LABEL != null">#{LABEL}, </if>
+             <if test="BLONG != null">#{BLONG}, </if>
+             <if test="BLONG_NAME != null">#{BLONG_NAME}, </if>
+             <if test="PAY_WAY != null">#{PAY_WAY}, </if>
+             <if test="CREATE_DATE != null">#{CREATE_DATE}, </if>
+			 <if test="CREATE_BY != null">#{CREATE_BY}, </if>
+			 <if test="REMARK != null">#{REMARK}, </if>
+			 <if test="IMAGE != null">#{IMAGE}, </if>
+            </trim>
+	    <![CDATA[ ) ]]>  
+ 	</insert>
+	
+	<update id="update" parameterType="map">
+		UPDATE cd_bill T SET 
+			<if test="CONSUME_TIME != null ">
+				T.CONSUME_TIME=TO_DATE(#{CONSUME_TIME},'YYYY-MM-DD HH24:MI:SS') </if>
+			<if test="CONSUME_TYPE != null">,T.CONSUME_TYPE=#{CONSUME_TYPE} </if>
+			<if test="AMOUNT != null ">,T.AMOUNT=#{AMOUNT} </if>
+			<if test="ITEM != null">,T.ITEM=#{ITEM} </if>
+			<if test="PLACE != null">,T.PLACE=#{PLACE} </if>
+			<if test="LABEL != null">,T.LABEL=#{LABEL} </if>
+			<if test="BLONG != null">,T.BLONG=#{BLONG} </if>
+			<if test="BLONG_NAME != null">,T.BLONG_NAME=#{BLONG_NAME} </if>
+			<if test="PAY_WAY != null">,T.PAY_WAY=#{PAY_WAY} </if>
+			<if test="REMARK != null">,T.REMARK=#{REMARK} </if>
+			<if test="IMAGE != null">,T.IMAGE=#{IMAGE} </if>
+		WHERE T.GUUID=#{GUUID}
+	</update>
+	
+</mapper>

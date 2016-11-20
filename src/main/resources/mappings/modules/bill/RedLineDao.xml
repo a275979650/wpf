@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.bill.dao.RedLineDao">
+	<select id="list" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT t.* FROM CD_RED_LINE t 
+		<where>
+			<if test="MONTH != null and MONTH !=''"> AND t.MONTH = #{MONTH}</if>
+			<if test="VALUE_MIN != null and VALUE_MIN !=''"> AND t.VALUE_MIN <![CDATA[>=]]>  #{VALUE_MIN}</if>
+			<if test="VALUE_MAX != null and VALUE_MAX !=''"> AND t.VALUE_MAX <![CDATA[<=]]>  #{VALUE_MAX}</if>
+			<if test="LABEL != null and LABEL !=''"> AND t.LABEL = #{LABEL} </if>
+		</where>
+		order by t.MONTH DESC
+	</select>
+	
+	<select id="get" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT * from CD_RED_LINE t
+		<where>
+			GUUID=#{numId}
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="string" >
+		   DELETE CD_RED_LINE WHERE GUUID=#{numId}
+	 </delete>
+	
+	<insert id="insert" parameterType="map">
+	   INSERT INTO CD_RED_LINE(
+	      <trim prefix=""  suffixOverrides=",">
+	      	 GUUID,
+             <if test="MONTH != null ">MONTH, </if>
+             <if test="VALUE != null ">VALUE, </if>
+			 <if test="REMARK != null">REMARK, </if>
+			 <if test="EXPLAIN != null">EXPLAIN, </if>
+           </trim>
+	    <![CDATA[ ) values( ]]> 
+	       <trim prefix=""  suffixOverrides=",">
+	       	#{GUUID},
+             <if test="MONTH != null ">#{MONTH}, </if>
+             <if test="VALUE != null ">#{VALUE}, </if>
+			 <if test="REMARK != null">#{REMARK}, </if>
+			 <if test="EXPLAIN != null">#{EXPLAIN}, </if>
+            </trim>
+	    <![CDATA[ ) ]]>  
+ 	</insert>
+	
+	<update id="update" parameterType="map">
+		UPDATE CD_RED_LINE T 
+		<set>
+			<if test="MONTH != null ">T.MONTH=#{MONTH}, </if>
+			<if test="VALUE != null">T.VALUE=#{VALUE}, </if>
+			<if test="REMARK != null">T.REMARK=#{REMARK}, </if>
+			<if test="EXPLAIN != null">T.EXPLAIN=#{EXPLAIN}, </if>
+		</set>
+		WHERE T.GUUID=#{GUUID}
+	</update>
+	
+</mapper>
