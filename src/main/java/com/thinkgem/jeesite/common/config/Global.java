@@ -58,6 +58,8 @@ public class Global {
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
 	
+	public static final String CONTROLLER_RETURN_SUCCESS = "OK";
+	
 	/**
 	 * 上传文件基础虚拟路径
 	 */
