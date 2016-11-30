@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.mmh.dao.AccountDao">
+	<select id="list" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT t.* 
+		FROM MMH_ACCOUNT t 
+		<where>
+			<if test="SITE_ID != null and SITE_ID !=''"> AND t.SITE_ID = #{SITE_ID} </if>
+			<if test="CON_PHONE != null and CON_PHONE !=''"> AND t.CON_PHONE like '%' ||  #{CON_PHONE} || '%'</if>
+			<if test="ACCOUNT != null and ACCOUNT !=''"> AND t.ACCOUNT like '%' || #{ACCOUNT} || '%' </if>
+			<if test="CON_EMAIL != null and CON_EMAIL !=''"> AND t.CON_EMAIL like '%' || #{CON_EMAIL} || '%' </if>
+		</where>
+		order by t.CREATE_TIME DESC
+	</select>
+	
+	<select id="getById" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT * from MMH_ACCOUNT t
+		<where>
+			ID=#{id}
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="string" >
+		   DELETE MMH_ACCOUNT WHERE ID = #{deleteId}
+	 </delete>
+	
+	<insert id="insert" parameterType="map">
+	   INSERT INTO MMH_ACCOUNT(
+	      <trim prefix=""  suffixOverrides=",">
+	      	 CREATE_TIME,ID,SITE_ID,
+             <if test="ACCOUNT != null ">ACCOUNT, </if>
+             <if test="PWD != null ">PWD, </if>
+             <if test="CON_EMAIL != null ">CON_EMAIL, </if>
+             <if test="CON_PHONE != null ">CON_PHONE, </if>
+             <if test="CON_QQ != null ">CON_QQ, </if>
+             <if test="CON_WEIXIN != null ">CON_WEIXIN, </if>
+             <if test="CON_OTHER != null ">CON_OTHER, </if>
+             <if test="CREATOR != null">CREATOR, </if>
+			 <if test="REMARK != null">REMARK, </if>
+           </trim>
+	    <![CDATA[ ) values( ]]> 
+	       <trim prefix=""  suffixOverrides=",">
+	       	 SYSDATE,#{ID},#{SITE_ID},
+             <if test="ACCOUNT != null ">#{ACCOUNT}, </if>
+             <if test="PWD != null ">#{PWD}, </if>
+             <if test="CON_EMAIL != null ">#{CON_EMAIL}, </if>
+             <if test="CON_PHONE != null ">#{CON_PHONE}, </if>
+             <if test="CON_QQ != null ">#{CON_QQ}, </if>
+             <if test="CON_WEIXIN != null ">#{CON_WEIXIN}, </if>
+             <if test="CON_OTHER != null ">#{CON_OTHER}, </if>
+             <if test="CREATOR != null">#{CREATOR}, </if>
+			 <if test="REMARK != null">#{REMARK}, </if>
+            </trim>
+	    <![CDATA[ ) ]]>  
+ 	</insert>
+	
+	<update id="update" parameterType="map">
+		UPDATE MMH_ACCOUNT T SET 
+			T.CZSJ = SYSDATE 
+			<if test="CZR != null ">,T.CZR = #{CZR}</if>
+			<if test="ACCOUNT != null">,T.ACCOUNT=#{ACCOUNT} </if>
+			<if test="PWD != null">,T.PWD=#{PWD} </if>
+			<if test="CON_EMAIL != null ">,T.CON_EMAIL=#{CON_EMAIL} </if>
+			<if test="CON_PHONE != null">,T.CON_PHONE=#{CON_PHONE} </if>
+			<if test="CON_QQ != null">,T.CON_QQ=#{CON_QQ} </if>
+			<if test="CON_WEIXIN != null">,T.CON_WEIXIN=#{CON_WEIXIN} </if>
+			<if test="CON_OTHER != null">,T.CON_OTHER=#{CON_OTHER} </if>
+			<if test="REMARK != null">,T.REMARK=#{REMARK} </if>
+		WHERE T.ID = #{ID}
+	</update>
+	
+</mapper>

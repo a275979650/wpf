@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bns.modules.mmh.dao.MmhSiteDao">
+	<select id="list" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT t.* 
+		FROM MMH_SITE t 
+		<where>
+			<if test="TYPE != null and TYPE !=''"> AND t.TYPE = #{TYPE} </if>
+			<if test="NAME != null and NAME !=''"> AND t.NAME like '%' || #{NAME} || '%' </if>
+		</where>
+		order by t.CREATE_TIME DESC
+	</select>
+	
+	<select id="getById" parameterType="map" resultType="upperCaseKeyMap">
+		SELECT * from MMH_SITE t
+		<where>
+			ID=#{id}
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="string" >
+		   DELETE MMH_SITE WHERE ID = #{deleteId}
+	 </delete>
+	
+	<insert id="insert" parameterType="map">
+	   INSERT INTO MMH_SITE(
+	      <trim prefix=""  suffixOverrides=",">
+	      	 CREATE_TIME,ID,
+             <if test="NAME != null ">NAME, </if>
+             <if test="TYPE != null ">TYPE, </if>
+             <if test="URL != null ">URL, </if>
+             <if test="TAGLIB != null ">TAGLIB, </if>
+             <if test="CREATOR != null">CREATOR, </if>
+			 <if test="REMARK != null">REMARK, </if>
+           </trim>
+	    <![CDATA[ ) values( ]]> 
+	       <trim prefix=""  suffixOverrides=",">
+	       	 SYSDATE,#{ID},
+             <if test="NAME != null ">#{NAME}, </if>
+             <if test="TYPE != null ">#{TYPE}, </if>
+             <if test="URL != null ">#{URL}, </if>
+             <if test="TAGLIB != null ">#{TAGLIB}, </if>
+             <if test="CREATOR != null">#{CREATOR}, </if>
+			 <if test="REMARK != null">#{REMARK}, </if>
+            </trim>
+	    <![CDATA[ ) ]]>  
+ 	</insert>
+	
+	<update id="update" parameterType="map">
+		UPDATE MMH_SITE T SET 
+			T.CZSJ = SYSDATE 
+			<if test="CZR != null ">,T.CZR = #{CZR}</if>
+			<if test="NAME != null">,T.NAME=#{NAME} </if>
+			<if test="URL != null ">,T.URL=#{URL} </if>
+			<if test="TAGLIB != null">,T.TAGLIB=#{TAGLIB} </if>
+			<if test="TYPE != null">,T.TYPE=#{TYPE} </if>
+			<if test="REMARK != null">,T.REMARK=#{REMARK} </if>
+		WHERE T.ID = #{ID}
+	</update>
+	
+</mapper>
