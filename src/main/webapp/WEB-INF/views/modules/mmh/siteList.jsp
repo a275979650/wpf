@@ -93,6 +93,7 @@ function detail(guid,siteName) {
 				<th width="120px">类型</th>
 				<th>名称</th>
 				<th>URL</th>
+				<th>简介</th>
 				<th>创建时间</th>
 				<th>备注</th>
 				<th width="100px">操作</th>
@@ -106,6 +107,7 @@ function detail(guid,siteName) {
 				<td>${fns:getDictLabel(bean['TYPE'], 'MMH_SITE_TYPE', '')}</td>
 				<td>${bean['NAME']}</td>
 				<td>${bean['URL']}</td>
+				<td title="${bean['EXPLAIN']}">${fn:substring(bean['EXPLAIN'],0,30)}</td>
 				<td>${fns:formatDate(bean['CREATE_TIME'], 'yyyy-MM-dd HH:mm:ss') }</td>
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
 				<td><a href="javascript:modify('${bean.ID}')">修改</a>

@@ -32,6 +32,7 @@
              <if test="TAGLIB != null ">TAGLIB, </if>
              <if test="CREATOR != null">CREATOR, </if>
 			 <if test="REMARK != null">REMARK, </if>
+			 <if test="EXPLAIN != null">EXPLAIN, </if>
            </trim>
 	    <![CDATA[ ) values( ]]> 
 	       <trim prefix=""  suffixOverrides=",">
@@ -42,6 +43,7 @@
              <if test="TAGLIB != null ">#{TAGLIB}, </if>
              <if test="CREATOR != null">#{CREATOR}, </if>
 			 <if test="REMARK != null">#{REMARK}, </if>
+			 <if test="EXPLAIN != null">#{EXPLAIN}, </if>
             </trim>
 	    <![CDATA[ ) ]]>  
  	</insert>
@@ -55,6 +57,7 @@
 			<if test="TAGLIB != null">,T.TAGLIB=#{TAGLIB} </if>
 			<if test="TYPE != null">,T.TYPE=#{TYPE} </if>
 			<if test="REMARK != null">,T.REMARK=#{REMARK} </if>
+			<if test="EXPLAIN != null">,T.EXPLAIN=#{EXPLAIN} </if>
 		WHERE T.ID = #{ID}
 	</update>
 	

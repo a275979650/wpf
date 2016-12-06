@@ -77,6 +77,17 @@
 		<tr>
 			<td colspan="2">
 				<div class="control-group">
+					<label class="control-label">简介:</label>
+					<div class="controls">
+				       <form:textarea path="bean['EXPLAIN']" htmlEscape="true" rows="3" maxlength="60" 
+				       	class="input-xlarge area" style="width:80%"/>
+					</div>
+				</div>	
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div class="control-group">
 					<label class="control-label">备注:</label>
 					<div class="controls">
 				       <form:textarea path="bean['REMARK']" htmlEscape="true" rows="3" maxlength="60" 
