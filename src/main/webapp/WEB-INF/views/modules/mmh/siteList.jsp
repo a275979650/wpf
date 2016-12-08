@@ -110,10 +110,10 @@ function detail(guid,siteName) {
 				<td title="${bean['EXPLAIN']}">${fn:substring(bean['EXPLAIN'],0,30)}</td>
 				<td>${fns:formatDate(bean['CREATE_TIME'], 'yyyy-MM-dd HH:mm:ss') }</td>
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
-				<td><a href="javascript:modify('${bean.ID}')">修改</a>
-				&nbsp;|&nbsp;<a href="javascript:del('${bean.ID}')">删除</a>
+				<td><a href="javascript:modify('${bean.ID}')"><i class="iconfont f16">&#xe619;</i></a>
+				&nbsp;|&nbsp;<a href="javascript:del('${bean.ID}')"><i class="iconfont f16">&#xe617;</i></a>
 				&nbsp;<a href="javascript:detail('${bean.ID}','${bean.NAME }')" title="查看详细">
-					<i id="iconIcon" class="icon-info-sign"></i></a>
+					<i class="iconfont f16">&#xe638;</i></a>
 				</td>
 				</tr>
 			</c:forEach>
