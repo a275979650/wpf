@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bns.modules.mmh.dao.AccountDao">
 	<select id="list" parameterType="map" resultType="upperCaseKeyMap">
-		SELECT t.* 
+		SELECT t.ID, t.SITE_ID,t.ACCOUNT,t.CON_EMAIL,t.CON_PHONE,t.CREATE_TIME,t.CZR,t.CREATOR,t.CZSJ,
+		t.REMARK,t.CON_QQ,t.CON_WEIXIN,t.CON_OTHER
 		FROM MMH_ACCOUNT t 
 		<where>
 			<if test="SITE_ID != null and SITE_ID !=''"> AND t.SITE_ID = #{SITE_ID} </if>
@@ -14,7 +15,8 @@
 	</select>
 	
 	<select id="getById" parameterType="map" resultType="upperCaseKeyMap">
-		SELECT * from MMH_ACCOUNT t
+		SELECT t.ID, t.SITE_ID,t.ACCOUNT,t.CON_EMAIL,t.CON_PHONE,t.CREATE_TIME,t.CZR,t.CREATOR,t.CZSJ,
+		t.REMARK,t.CON_QQ,t.CON_WEIXIN,t.CON_OTHER from MMH_ACCOUNT t
 		<where>
 			ID=#{id}
 		</where>
@@ -59,7 +61,7 @@
 			T.CZSJ = SYSDATE 
 			<if test="CZR != null ">,T.CZR = #{CZR}</if>
 			<if test="ACCOUNT != null">,T.ACCOUNT=#{ACCOUNT} </if>
-			<if test="PWD != null">,T.PWD=#{PWD} </if>
+			<if test="PWD != null and PWD !=''">,T.PWD=#{PWD} </if>
 			<if test="CON_EMAIL != null ">,T.CON_EMAIL=#{CON_EMAIL} </if>
 			<if test="CON_PHONE != null">,T.CON_PHONE=#{CON_PHONE} </if>
 			<if test="CON_QQ != null">,T.CON_QQ=#{CON_QQ} </if>
@@ -69,4 +71,10 @@
 		WHERE T.ID = #{ID}
 	</update>
 	
+	<select id="getPwd" parameterType="map" resultType="java.lang.String">
+		SELECT t.PWD from MMH_ACCOUNT t
+		<where>
+			ID=#{id}
+		</where>
+	</select>
 </mapper>

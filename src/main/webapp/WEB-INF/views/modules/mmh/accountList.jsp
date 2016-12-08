@@ -6,6 +6,9 @@
 <meta name="decorator" content="default" />
 <script type="text/javascript">
 	$(document).ready(function() {
+		if('${message}'){
+			layer.msg('${message}');
+		}
 	});
 function page(n, s) {
 	$("#pageNo").val(n);
@@ -15,7 +18,8 @@ function page(n, s) {
 	return false;
 }
 function reload() {
-	window.location.href = "${ctx}/mmh/account/list";
+	$("#searchForm input[type='text']:not(:hidden)").val("");
+	$("#searchForm").submit();
 }
 function modify(guid){
 	window.location.href="${ctx}/mmh/account/form?id="+guid;
@@ -33,12 +37,23 @@ function del(guid){
 function add() {
 	window.location.href="${ctx}/mmh/account/form?siteId="+$("#siteId").val();
 }
+function viewPwd(id){
+	$.ajax({
+		type: "POST",
+		dataType: "text",
+		data: {"id" : id},
+		url:"${ctx}/mmh/account/getInfo",
+		success : function(data){
+			layer.tips(data, "#"+id,{time:2500});
+		}
+	});
+}
 </script>
 </head>
 <body>
 	<form:form id="searchForm" modelAttribute="map" class="breadcrumb form-search" method="post"
 		action="${ctx}/mmh/account/list">
-		<input id="siteId" name="SITE_ID" type="hidden" value="${map.bean.SITE_ID}" />
+		<input id="siteId" name="bean['SITE_ID']" type="hidden" value="${map.bean.SITE_ID}" />
 		<table border="0">
 			<tr>
 				<td><label>关联手机：</label></td>
@@ -70,24 +85,24 @@ function add() {
 		<thead>
 			<tr>
 				<th width="120px">用户名</th>
-				<th>关联邮箱</th>
 				<th>关联手机</th>
+				<th>关联邮箱</th>
 				<th>创建时间</th>
 				<th>备注</th>
-				<th width="100px">操作</th>
+				<th width="200px">操作</th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${accountList}" var="bean">
 				<tr>
 				<td>${bean['ACCOUNT']}</td>
-				<td>${bean['CON_EMAIL']}</td>
 				<td>${bean['CON_PHONE']}</td>
+				<td>${bean['CON_EMAIL']}</td>
 				<td>${fns:formatDate(bean['CREATE_TIME'], 'yyyy-MM-dd HH:mm:ss') }</td>
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
 				<td><a href="javascript:modify('${bean.ID}')">修改</a>
 				&nbsp;|&nbsp;<a href="javascript:del('${bean.ID}')">删除</a>
-				&nbsp;<a href="javascript:detail('${bean.ID}')" title="查看密码">
+				&nbsp;<a id="${bean.ID}" href="javascript:viewPwd('${bean.ID}')" title="查看密码">
 					<i id="iconIcon" class="icon-info-sign"></i></a>
 				</td>
 				</tr>

@@ -94,9 +94,9 @@ function detail(guid,siteName) {
 				<th>名称</th>
 				<th>URL</th>
 				<th>简介</th>
-				<th>创建时间</th>
+				<th width="120px">创建时间</th>
 				<th>备注</th>
-				<th width="100px">操作</th>
+				<th width="150px">操作</th>
 			</tr>
 		</thead>
 		<tbody>

@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,7 +66,8 @@ public class AccountController extends BaseController{
             Model model,RedirectAttributes redirectAttributes){
         accountService.save(formbean.getBean());
         addMessage(redirectAttributes, "保存成功");
-        return "redirect:" + Global.getAdminPath() + "/mmh/account/list";
+        return "redirect:" + Global.getAdminPath() + "/mmh/account/list?siteId="
+            + MapUtils.getString(formbean.getBean(), "SITE_ID");
     }
     
     @ResponseBody
@@ -78,6 +80,15 @@ public class AccountController extends BaseController{
         }else{
             message = "参数错误!";
         }
+        return message;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "getInfo")
+    public String getInfo(String id) {
+        String message = "";
+        if(StringUtils.isNotBlank(id))
+            message = accountService.getPwd(id);
         return message;
     }
 

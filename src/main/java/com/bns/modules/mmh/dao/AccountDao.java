@@ -18,4 +18,6 @@ public interface AccountDao{
 
     int delete(String deleteId);
 
+    String getPwd(String id);
+
 }
