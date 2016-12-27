@@ -7,6 +7,7 @@
 		<where>
 			<if test="TYPE != null and TYPE !=''"> AND t.TYPE = #{TYPE} </if>
 			<if test="NAME != null and NAME !=''"> AND t.NAME like '%' || #{NAME} || '%' </if>
+			<if test="TAGLIB != null and TAGLIB !=''"> AND t.TAGLIB = #{TAGLIB} </if>
 		</where>
 		order by t.CREATE_TIME DESC
 	</select>

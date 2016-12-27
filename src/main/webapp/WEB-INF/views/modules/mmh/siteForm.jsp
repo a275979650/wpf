@@ -22,12 +22,7 @@
 </script>
 </head>
 <body>
-	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/mmh/site/list">站点管理列表</a></li>
-		<li class="active"><a href="${ctx}/mmh/site/form?id=${empty bean.bean.ID?'':bean.bean.ID}">
-			${empty bean.bean.ID?"添加":"修改"}站点</a></li>
-	</ul>
-	<tags:orgmessage content="${message}"/>
+	<div style="display:none;"><tags:orgmessage content="${message}"/></div>
 	<form:form id="inputForm" modelAttribute="bean" action="${ctx}/mmh/site/save" method="post"
 		class="form-horizontal">
 		<form:hidden path="bean[ID]" />
@@ -46,12 +41,13 @@
              </td>
          	 <td>
 				<div class="control-group">
-					<label class="control-label"><font color="red">*</font>分类标签:</label>
+					<label class="control-label">分类标签:</label>
 						<div class="controls">
-							<tags:treeselect id="LABEL" name="bean['LABEL']" value="${bean.bean.LABEL}" 
-							labelName="bean['LABEL_NAME']" 
-							labelValue="${fns:getBillLabelBySeparator(bean.bean.LABEL,'','')}" title="分类标签" 
-							url="/bill/comm/treeData" extId="${bean.bean.LABEL}" cssClass="input-small"/>
+							<form:select id="LABEL" path="bean['TAGLIB']" class="input-medium">
+								<form:option value="" label=""/>
+								<form:options items="${fns:getDictList('MMH_SITE_FLAG')}" 
+									itemValue="value" itemLabel="label" htmlEscape="false"/>
+							</form:select>
 						</div>
 				</div>
 			</td>
@@ -99,10 +95,10 @@
 			</td>
 		</tr>
 	</table>
-	<div class="form-actions">
+	<!-- <div class="form-actions">
 		<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存" />&nbsp; 
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="cancel()" />
-	</div>
+	</div> -->
 	</form:form>
 </body>
 </html>

@@ -37,8 +37,27 @@ function page(n, s) {
 function reload() {
 	window.location.href = "${ctx}/bill/list";
 }
-function modify(guid){
-	window.location.href="${ctx}/bill/form?numId="+guid;
+function modify(guid,siteName) {
+	var index = layer.open({
+		type: 2,
+		area: ['800px', '450px'],
+		maxmin: true,
+		title: siteName,
+		content: "${ctx}/bill/form?numId="+guid,
+		btn: ['保存','返回'],
+		btnAlign: 'c',
+		offset: "auto",
+		yes: function (index, layero) {debugger;
+			layer.getChildFrame('#inputForm', index).submit();
+	    	//layer.close(index);
+	    	//layer.msg("操作成功！", {time: 2000, icon:6});
+	    	//$("#searchForm").submit();
+		},btn2: function (index) {
+			layer.close(index);
+			$("#searchForm").submit();
+		}
+	});
+	//layer.full(index);
 }
 function del(guid){
 	top.$.jBox.confirm("确认删除账单信息吗？",'系统提示',function(v,h,f){
@@ -51,12 +70,18 @@ function del(guid){
 }
 
 function detail(guid) {
-	top.$.jBox.open("iframe:${ctx}/bill/view?numId="+guid,"账单详细",800,450,{
-		buttons : {"关闭" : true},
-		submit : function(v, h, f) {
-		},
-		loaded : function(h) {
-			$(".jbox-content", top.document).css("overflow-y", "hidden");
+	var index = layer.open({
+		type: 2,
+		area: ['800px', '450px'],
+		maxmin: true,
+		title: "账单详细",
+		content: "${ctx}/bill/view?numId="+guid,
+		btn: ['关闭'],
+		offset: "auto",
+		yes: function (index, layero) {
+	    	layer.close(index);
+		},cancel: function (index) {
+			layer.close(index);
 		}
 	});
 }
@@ -75,10 +100,6 @@ function importData() {
 </script>
 </head>
 <body>
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/bill/list">账单管理列表</a></li>
-		<li><a href="${ctx}/bill/form">添加账单</a></li>
-	</ul>
 	<div style="display:none;"><tags:orgmessage content="${message}" /></div>
 	<form:form id="exportForm" modelAttribute="map"
 		class="breadcrumb form-search" method="post" style="display:none;" action="${ctx}/demo/export">
@@ -131,17 +152,16 @@ function importData() {
 					<input class="btnImpAndExp  btn-primaryImpAndExp" type="button" value="导入"
 						onclick="importData();">&nbsp;&nbsp; 
 					<input id="export" class="btnImpAndExp btn-primaryImpAndExp" type="button" value="导出">
+					<a href="javascript:modify('','添加账单记录');" class="btn btn-primary"><i class="iconfont f16 mr5">&#xe63f;</i>添加</a>
 				</td>
 			</tr>
 		</table>
 	</form:form>
-
 	<table id="contentTable"
 		class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
 				<th width="12px"><input type="checkbox" id="tableHead"></th>
-				<th width="100px">操作</th>
 				<th>账单主体</th>
 				<th width="120px">发生时间</th>
 				<th>收支类型</th>
@@ -151,6 +171,7 @@ function importData() {
 				<th>交易地点</th>
 				<th width="100px">支付方式</th>
 				<th>备注</th>
+				<th width="100px">操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -158,11 +179,6 @@ function importData() {
 				<tr>
 				<td><input type="checkbox" name="rowSelect"
 					value="${bean['GUUID']}" /></td>
-				<td><a href="javascript:modify('${bean.GUUID}')">修改</a>
-				&nbsp;|&nbsp;<a href="javascript:del('${bean.GUUID}')">删除</a>
-				&nbsp;<a href="javascript:detail('${bean.GUUID}')" title="查看详细">
-					<i id="iconIcon" class="icon-info-sign"></i></a>
-				</td>
 				<td width="70px">${bean['BLONG_NAME']}</td>
 				<td>${fns:formatDate(bean['CONSUME_TIME'], 'yyyy-MM-dd HH:mm:ss') }</td>
 				<td>${fns:getDictLabel(bean['CONSUME_TYPE'], 'BILL_IN_OUT_TYPE', '')}</td>
@@ -172,6 +188,11 @@ function importData() {
 				<td>${bean['PLACE']}</td>
 				<td>${fns:getDictLabel(bean['PAY_WAY'], 'BILL_PAY_WAY', '')}</td>
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
+				<td><a href="javascript:modify('${bean.GUUID}','修改账单记录')" title="修改"><i class="iconfont f16">&#xe619;</i></a>
+				&nbsp;|&nbsp;<a href="javascript:del('${bean.GUUID}')" title="删除"><i class="iconfont f16">&#xe617;</i></a>
+				&nbsp;<a href="javascript:detail('${bean.GUUID}')" title="查看详细">
+					<i class="iconfont f16">&#xe638;</i></a>
+				</td>
 				</tr>
 			</c:forEach>
 			<tr><td colspan="11" style="text-align:right;color:red;font-weight:bold;">

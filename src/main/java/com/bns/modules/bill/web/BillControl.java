@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,7 +103,7 @@ public class BillControl extends BaseController {
         String path = request.getSession().getServletContext().getRealPath("/static/images/billImage");
         billService.save(formbean.getBean(), file, path);
         addMessage(redirectAttributes, "保存成功");
-        return "redirect:" + Global.getAdminPath() + "/bill/list";
+        return "redirect:" + Global.getAdminPath() + "/bill/form?numId="+MapUtils.getString(formbean.getBean(), "GUUID");
     }
     
     @RequestMapping(value = "delete")

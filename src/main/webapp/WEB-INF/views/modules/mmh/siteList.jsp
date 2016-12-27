@@ -25,8 +25,27 @@ function page(n, s) {
 function reload() {
 	window.location.href = "${ctx}/mmh/site/list";
 }
-function modify(guid){
-	window.location.href="${ctx}/mmh/site/form?id="+guid;
+function modify(guid,siteName) {
+	var index = layer.open({
+		type: 2,
+		area: ['800px', '450px'],
+		maxmin: true,
+		title: siteName,
+		content: "${ctx}/mmh/site/form?id="+guid,
+		btn: ['保存','返回'],
+		btnAlign: 'c',
+		offset: "auto",
+		yes: function (index, layero) {debugger;
+			layer.getChildFrame('#inputForm', index).submit();
+	    	//layer.close(index);
+	    	//layer.msg("操作成功！", {time: 2000, icon:6});
+	    	//$("#searchForm").submit();
+		},btn2: function (index) {
+			layer.close(index);
+			$("#searchForm").submit();
+		}
+	});
+	//layer.full(index);
 }
 function del(guid){
 	top.$.jBox.confirm("确认删除站点信息吗？",'系统提示',function(v,h,f){
@@ -51,16 +70,12 @@ function detail(guid,siteName) {
 </script>
 </head>
 <body>
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/mmh/site/list">站点管理列表</a></li>
-		<li><a href="${ctx}/mmh/site/form">添加站点</a></li>
-	</ul>
 	<div style="display:none;"><tags:orgmessage content="${message}" /></div>
 	<form:form id="searchForm" modelAttribute="map" class="breadcrumb form-search" method="post"
 		action="${ctx}/mmh/site/list">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
-		<table border="0">
+		<table border="0"
 			<tr>
 				<td><label>站点类型：</label></td>
 				<td><form:select path="bean['TYPE']" class="input-small">
@@ -69,9 +84,11 @@ function detail(guid,siteName) {
 							itemValue="value" itemLabel="label" htmlEscape="false"/>
 					</form:select></td>
 				<td><label>分类标签：</label> </td>
-				<td><tags:treeselect id="TAGLIB" name="bean['TAGLIB']" value="${map.bean.TAGLIB}" 
-					labelName="bean['TAGLIB_NAME']" labelValue="${map.bean.TAGLIB_NAME}" title="分类标签" 
-					url="/bill/comm/treeData" extId="${map.bean.TAGLIB}" allowClear="true" cssStyle="width:82px;"/>
+				<td><form:select path="bean['TAGLIB']" class="input-small">
+						<form:option value="" label=""/>
+						<form:options items="${fns:getDictList('MMH_SITE_FLAG')}" 
+							itemValue="value" itemLabel="label" htmlEscape="false"/>
+					</form:select>
 				</td>
 				<td><label>名称：</label></td>
 				<td><form:input path="bean['NAME']" htmlEscape="false"
@@ -82,6 +99,9 @@ function detail(guid,siteName) {
 					<input id="btnCancel" class="btn btn-primary" type="button" value="重置"
 						onclick="return reload();" />
 				</td>
+				<td align="right">
+					<a href="javascript:modify('','添加站点信息');" class="btn btn-primary"><i class="iconfont f16 mr5">&#xe63f;</i>添加</a>
+				</td>
 			</tr>
 		</table>
 	</form:form>
@@ -90,9 +110,10 @@ function detail(guid,siteName) {
 		<thead>
 			<tr>
 				<th width="12px"><input type="checkbox" id="tableHead"></th>
-				<th width="120px">类型</th>
+				<th width="60px">类型</th>
 				<th>名称</th>
 				<th>URL</th>
+				<th width="60px">标签</th>
 				<th>简介</th>
 				<th width="120px">创建时间</th>
 				<th>备注</th>
@@ -107,10 +128,11 @@ function detail(guid,siteName) {
 				<td>${fns:getDictLabel(bean['TYPE'], 'MMH_SITE_TYPE', '')}</td>
 				<td>${bean['NAME']}</td>
 				<td>${bean['URL']}</td>
+				<td>${fns:getDictLabel(bean['TAGLIB'], 'MMH_SITE_FLAG', '')}</td>
 				<td title="${bean['EXPLAIN']}">${fn:substring(bean['EXPLAIN'],0,30)}</td>
 				<td>${fns:formatDate(bean['CREATE_TIME'], 'yyyy-MM-dd HH:mm:ss') }</td>
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
-				<td><a href="javascript:modify('${bean.ID}')"><i class="iconfont f16">&#xe619;</i></a>
+				<td><a href="javascript:modify('${bean.ID}','修改站点信息--${bean.NAME}')"><i class="iconfont f16">&#xe619;</i></a>
 				&nbsp;|&nbsp;<a href="javascript:del('${bean.ID}')"><i class="iconfont f16">&#xe617;</i></a>
 				&nbsp;<a href="javascript:detail('${bean.ID}','${bean.NAME }')" title="查看详细">
 					<i class="iconfont f16">&#xe638;</i></a>

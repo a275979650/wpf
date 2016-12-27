@@ -97,11 +97,7 @@
 </script>
 </head>
 <body>
-	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/bill/list">账单管理列表</a></li>
-		<li class="active"><a href="${ctx}/bill/form?numId=${empty bean.bean.GUUID?'':bean.bean.GUUID}">${empty bean.bean.GUUID?"添加":"修改"}账单</a></li>
-	</ul>
-	<tags:orgmessage content="${message}"/>
+	<div style="display:none;"><tags:orgmessage content="${message}"/></div>
 	<form:form id="inputForm" modelAttribute="bean" action="${ctx}/bill/save" method="post"
 		class="form-horizontal" enctype="multipart/form-data" >
 		<form:hidden path="bean[GUUID]" />
@@ -227,10 +223,10 @@
 			</td>
 		</tr>		
 	</table>
-	<div class="form-actions">
+	<!-- <div class="form-actions">
 		<input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存" />&nbsp; 
 		<input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)" />
-	</div>
+	</div> -->
 	</form:form>
 </body>
 </html>
