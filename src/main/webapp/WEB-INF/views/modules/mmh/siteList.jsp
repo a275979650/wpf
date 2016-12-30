@@ -35,26 +35,51 @@ function modify(guid,siteName) {
 		btn: ['保存','返回'],
 		btnAlign: 'c',
 		offset: "auto",
-		yes: function (index, layero) {debugger;
-			layer.getChildFrame('#inputForm', index).submit();
-	    	//layer.close(index);
-	    	//layer.msg("操作成功！", {time: 2000, icon:6});
-	    	//$("#searchForm").submit();
+		yes: function (index, layero) {
+			var inputForm = layer.getChildFrame('#inputForm', index);
+			if(inputForm.valid()){
+				$.ajax({
+					type: "post",
+					url: inputForm.attr("action"),
+					data: inputForm.serialize(),
+					success: function(data) {
+						if(data=="OK"){
+							layer.close(index);
+							top.layer.msg("操作成功！", {time: 1500, icon:6});
+					    	$('#searchForm').submit();
+						}else{
+							layer.msg(data,{time:2000,icon:2});
+						}
+					},error: function(data) {
+						layer.msg(data,{time:2000,icon:2});
+					}
+				});
+			}
 		},btn2: function (index) {
 			layer.close(index);
-			$("#searchForm").submit();
 		}
 	});
-	//layer.full(index);
 }
 function del(guid){
-	top.$.jBox.confirm("确认删除站点信息吗？",'系统提示',function(v,h,f){
-		   if(v=='ok'){
-	    		$("#searchForm").attr("action","${ctx}/mmh/site/delete?id="+guid);
-	    		$("#searchForm").submit();
-		   }
-		},{buttonsFocus:1});
- 	top.$('.jbox-body .jbox-icon').css('top','55px');
+	layer.confirm("确认删除站点信息吗(包含登录信息)？", {
+	    title: '提示', icon: 0,
+	    btn: ['确定', '取消'] //按钮
+	}, function () {
+	    $.ajax({
+	        type: "post",
+	        data: {"deleteId": guid},
+	        dataType: "text",
+	        url: "${ctx}/mmh/site/delete",
+	        success: function (data) {
+	        	if(data=="OK"){
+			    	top.layer.msg("操作成功！", {time: 1500, icon:6});
+			    	$('#searchForm').submit();
+				}else{
+					layer.msg("操作失败："+data,{time:2000,icon:2});
+				}
+	        }
+	    });
+	});
 }
 
 function detail(guid,siteName) {
@@ -134,7 +159,7 @@ function detail(guid,siteName) {
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
 				<td><a href="javascript:modify('${bean.ID}','修改站点信息--${bean.NAME}')"><i class="iconfont f16">&#xe619;</i></a>
 				&nbsp;|&nbsp;<a href="javascript:del('${bean.ID}')"><i class="iconfont f16">&#xe617;</i></a>
-				&nbsp;<a href="javascript:detail('${bean.ID}','${bean.NAME }')" title="查看详细">
+				&nbsp;|&nbsp;<a href="javascript:detail('${bean.ID}','${bean.NAME }')" title="查看详细">
 					<i class="iconfont f16">&#xe638;</i></a>
 				</td>
 				</tr>

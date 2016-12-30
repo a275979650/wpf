@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -97,6 +98,7 @@ public class BillControl extends BaseController {
         return "modules/bill/billDetail";
     }
     
+    @ResponseBody
     @RequestMapping(value = "save")
     public String save(FormBean formbean, HttpServletRequest request, HttpServletResponse response,
             Model model,RedirectAttributes redirectAttributes,@RequestParam(value = "file") MultipartFile file){
@@ -106,19 +108,17 @@ public class BillControl extends BaseController {
         return "redirect:" + Global.getAdminPath() + "/bill/form?numId="+MapUtils.getString(formbean.getBean(), "GUUID");
     }
     
+    @ResponseBody
     @RequestMapping(value = "delete")
     public String delete(FormBean formbean, HttpServletRequest request,HttpServletResponse response,String numId, Model model) {
+        String message = "";
         if(StringUtils.isNotBlank(numId)){
             billService.delete(numId);
-            model.addAttribute("message", "删除成功");
+            message = Global.CONTROLLER_RETURN_SUCCESS;
         }else{
-            model.addAttribute("message", "参数错误");
+            message = "参数错误!";
         }
-        Page<Map<String, Object>> page = billService.list(
-                new Page<Map<String, Object>>(request, response), formbean);//可扩展做查询
-        model.addAttribute("page", page);
-        model.addAttribute("map", formbean);
-        return "modules/bill/billList";
+        return message;
     }
     
 

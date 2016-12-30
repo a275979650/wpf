@@ -47,26 +47,37 @@ function modify(guid,siteName) {
 		btn: ['保存','返回'],
 		btnAlign: 'c',
 		offset: "auto",
-		yes: function (index, layero) {debugger;
+		yes: function (index, layero) {
+			//需要提交图片文件无法异步提交
 			layer.getChildFrame('#inputForm', index).submit();
-	    	//layer.close(index);
-	    	//layer.msg("操作成功！", {time: 2000, icon:6});
-	    	//$("#searchForm").submit();
+	    	layer.close(index);
+	    	top.layer.msg("操作成功！", {time: 1500, icon:6});
+	    	$("#searchForm").submit();
 		},btn2: function (index) {
 			layer.close(index);
-			$("#searchForm").submit();
 		}
 	});
-	//layer.full(index);
 }
 function del(guid){
-	top.$.jBox.confirm("确认删除账单信息吗？",'系统提示',function(v,h,f){
-		   if(v=='ok'){
-	    		$("#searchForm").attr("action","${ctx}/bill/delete?numId="+guid);
-	    		$("#searchForm").submit();
-		   }
-		},{buttonsFocus:1});
- 	top.$('.jbox-body .jbox-icon').css('top','55px');
+	layer.confirm("确认删除账单信息吗？", {
+	    title: '提示', icon: 0,
+	    btn: ['确定', '取消'] //按钮
+	}, function () {
+	    $.ajax({
+	        type: "post",
+	        data: {"numId": guid},
+	        dataType: "text",
+	        url: "${ctx}/bill/delete",
+	        success: function (data) {
+	        	if(data=="OK"){
+			    	top.layer.msg("操作成功！", {time: 1500, icon:6});
+			    	$('#searchForm').submit();
+				}else{
+					layer.msg("操作失败："+data,{time:2000,icon:2});
+				}
+	        }
+	    });
+	});
 }
 
 function detail(guid) {
@@ -190,7 +201,7 @@ function importData() {
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
 				<td><a href="javascript:modify('${bean.GUUID}','修改账单记录')" title="修改"><i class="iconfont f16">&#xe619;</i></a>
 				&nbsp;|&nbsp;<a href="javascript:del('${bean.GUUID}')" title="删除"><i class="iconfont f16">&#xe617;</i></a>
-				&nbsp;<a href="javascript:detail('${bean.GUUID}')" title="查看详细">
+				&nbsp;|&nbsp;<a href="javascript:detail('${bean.GUUID}')" title="查看详细">
 					<i class="iconfont f16">&#xe638;</i></a>
 				</td>
 				</tr>

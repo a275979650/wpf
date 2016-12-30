@@ -6,9 +6,7 @@
 <meta name="decorator" content="default" />
 <script type="text/javascript">
 	$(document).ready(function() {
-		if('${message}'){
-			layer.msg('${message}');
-		}
+		
 	});
 function page(n, s) {
 	$("#pageNo").val(n);
@@ -21,22 +19,63 @@ function reload() {
 	$("#searchForm input[type='text']:not(:hidden)").val("");
 	$("#searchForm").submit();
 }
-function modify(guid){
-	window.location.href="${ctx}/mmh/account/form?id="+guid;
+function modify(guid, title,type) {
+	var index = layer.open({
+		type: 2,
+		area: ['800px', '450px'],
+		maxmin: true,
+		title: title,
+		content: "${ctx}/mmh/account/form?id="+guid+(type=="add"?"&siteId="+$("#siteId").val():""),
+		btn: ['保存','返回'],
+		btnAlign: 'c',
+		offset: "auto",
+		yes: function (index, layero) {
+			var inputForm = layer.getChildFrame('#inputForm', index);
+			if(inputForm.valid()){
+				$.ajax({
+					type: "post",
+					url: inputForm.attr("action"),
+					data: inputForm.serialize(),
+					success: function(data) {
+						if(data=="OK"){
+							layer.close(index);
+							top.layer.msg("操作成功！", {time: 1500, icon:6});
+					    	$('#searchForm').submit();
+						}else{
+							layer.msg(data,{time:2000,icon:2});
+						}
+					},error: function(data) {
+						layer.msg(data,{time:2000,icon:2});
+					}
+				});
+			}
+		},btn2: function (index) {
+			layer.close(index);
+		}
+	});
 }
 function del(guid){
-	top.$.jBox.confirm("确认删除站点登录信息吗？",'系统提示',function(v,h,f){
-		   if(v=='ok'){
-	    		$("#searchForm").attr("action","${ctx}/mmh/account/delete?id="+guid);
-	    		$("#searchForm").submit();
-		   }
-		},{buttonsFocus:1});
- 	top.$('.jbox-body .jbox-icon').css('top','55px');
+	layer.confirm("确认删除站点登录信息吗？", {
+	    title: '提示', icon: 0,
+	    btn: ['确定', '取消'] //按钮
+	}, function () {
+	    $.ajax({
+	        type: "post",
+	        data: {"deleteId": guid},
+	        dataType: "text",
+	        url: "${ctx}/mmh/account/delete",
+	        success: function (data) {
+	        	if(data=="OK"){
+			    	top.layer.msg("操作成功！", {time: 1500, icon:6});
+			    	$('#searchForm').submit();
+				}else{
+					layer.msg("操作失败："+data,{time:2000,icon:2});
+				}
+	        }
+	    });
+	});
 }
 
-function add() {
-	window.location.href="${ctx}/mmh/account/form?siteId="+$("#siteId").val();
-}
 function viewPwd(id){
 	$.ajax({
 		type: "POST",
@@ -74,8 +113,9 @@ function viewPwd(id){
 						onclick="return page();">
 					&nbsp;&nbsp;<input id="btnCancel" class="btn btn-primary" type="button" value="重置"
 						onclick="return reload();" />
-					&nbsp;&nbsp;<input id="btnAdd" class="btn btn-primary" type="button" value="添加"
-						onclick="add();" />
+					&nbsp;&nbsp;
+						<a href="javascript:modify('','添加账号信息','add');" class="btn btn-primary">
+						<i class="iconfont f16 mr5">&#xe63f;</i>添加</a>
 				</td>
 			</tr>
 		</table>
@@ -100,10 +140,10 @@ function viewPwd(id){
 				<td>${bean['CON_EMAIL']}</td>
 				<td>${fns:formatDate(bean['CREATE_TIME'], 'yyyy-MM-dd HH:mm:ss') }</td>
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
-				<td><a href="javascript:modify('${bean.ID}')">修改</a>
-				&nbsp;|&nbsp;<a href="javascript:del('${bean.ID}')">删除</a>
-				&nbsp;<a id="${bean.ID}" href="javascript:viewPwd('${bean.ID}')" title="查看密码">
-					<i id="iconIcon" class="icon-info-sign"></i></a>
+				<td><a href="javascript:modify('${bean.ID}','账号修改')"><i class="iconfont f16">&#xe619;</i></a>
+				&nbsp;|&nbsp;<a href="javascript:del('${bean.ID}')"><i class="iconfont f16">&#xe617;</i></a>
+				&nbsp;|&nbsp;<a id="${bean.ID}" href="javascript:viewPwd('${bean.ID}')" title="查看密码">
+					<i id="iconIcon" class="iconfont f16">&#xe633;</i></a>
 				</td>
 				</tr>
 			</c:forEach>
