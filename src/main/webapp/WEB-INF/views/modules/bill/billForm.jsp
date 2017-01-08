@@ -177,7 +177,7 @@
 				<div class="control-group">
 				<label class="control-label"><font color="red">*</font>账单内容:</label>
 					<div class="controls">
-						<form:input id="ITEM" path="bean['ITEM']" maxlength="60" required="true" 
+						<form:input id="ITEM" path="bean['ITEM']" maxlength="200" required="true" 
 						style="width:80%" />
 					</div>
 		        </div>

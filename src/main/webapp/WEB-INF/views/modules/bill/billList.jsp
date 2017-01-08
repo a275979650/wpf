@@ -50,9 +50,11 @@ function modify(guid,siteName) {
 		yes: function (index, layero) {
 			//需要提交图片文件无法异步提交
 			layer.getChildFrame('#inputForm', index).submit();
-	    	layer.close(index);
-	    	top.layer.msg("操作成功！", {time: 1500, icon:6});
-	    	$("#searchForm").submit();
+			setTimeout(function(){
+				layer.close(index);
+				top.layer.msg("操作成功！", {time: 1500, icon:6});
+				$("#searchForm").submit();
+			},2000); 
 		},btn2: function (index) {
 			layer.close(index);
 		}
@@ -195,7 +197,8 @@ function importData() {
 				<td>${fns:getDictLabel(bean['CONSUME_TYPE'], 'BILL_IN_OUT_TYPE', '')}</td>
 				<td>${fns:getBillLabelBySeparator(bean['LABEL'], '', '')}</td>
 				<td>${bean['AMOUNT']}</td>
-				<td><c:if test="${not empty bean.IMAGE}"><i id="iconIcon" class="icon-info-sign"></i></c:if>${bean['ITEM']}</td>
+				<td><a href="javascript:detail('${bean.GUUID}')" title="查看详细">
+				<c:if test="${not empty bean.IMAGE}"><i id="iconIcon" class="icon-info-sign"></i></c:if>${bean['ITEM']}</a></td>
 				<td>${bean['PLACE']}</td>
 				<td>${fns:getDictLabel(bean['PAY_WAY'], 'BILL_PAY_WAY', '')}</td>
 				<td title="${bean['REMARK']}">${fn:substring(bean['REMARK'],0,10)}</td>
