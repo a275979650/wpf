@@ -98,7 +98,6 @@ public class BillControl extends BaseController {
         return "modules/bill/billDetail";
     }
     
-    @ResponseBody
     @RequestMapping(value = "save")
     public String save(FormBean formbean, HttpServletRequest request, HttpServletResponse response,
             Model model,RedirectAttributes redirectAttributes,@RequestParam(value = "file") MultipartFile file){
