@@ -151,8 +151,8 @@ function detail(guid,siteName) {
 				<td><input type="checkbox" name="rowSelect"
 					value="${bean['ID']}" /></td>
 				<td>${fns:getDictLabel(bean['TYPE'], 'MMH_SITE_TYPE', '')}</td>
-				<td>${bean['NAME']}</td>
-				<td>${bean['URL']}</td>
+				<td><a href="javascript:detail('${bean.ID}','${bean.NAME }')" title="查看详细">${bean['NAME']}</a></td>
+				<td><a href="${bean.URL}" target="_blank">${bean['URL']}</a></td>
 				<td>${fns:getDictLabel(bean['TAGLIB'], 'MMH_SITE_FLAG', '')}</td>
 				<td title="${bean['EXPLAIN']}">${fn:substring(bean['EXPLAIN'],0,30)}</td>
 				<td>${fns:formatDate(bean['CREATE_TIME'], 'yyyy-MM-dd HH:mm:ss') }</td>
