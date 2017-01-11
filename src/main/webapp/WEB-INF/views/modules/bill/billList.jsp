@@ -127,7 +127,7 @@ function importData() {
 			<tr>
 				<td><label>收支类型：</label></td>
 				<td><form:select path="bean['CONSUME_TYPE']" class="input-small">
-						<form:option value="" label=""/>
+						<form:option value="" label="---请选择---"/>
 						<form:options items="${fns:getDictList('BILL_IN_OUT_TYPE')}" 
 							itemValue="value" itemLabel="label" htmlEscape="false"/>
 					</form:select></td>
@@ -153,7 +153,7 @@ function importData() {
 						maxlength="32" class="input-small" /></td>
 				<td><label>支付方式：</label></td>
 				<td><form:select path="bean['PAY_WAY']" class="input-small" >
-							<form:option value="" label=""/>
+							<form:option value="" label="---请选择---"/>
 							<form:options items="${fns:getDictList('BILL_PAY_WAY')}" 
 							itemValue="value" itemLabel="label" htmlEscape="false"/>
 						</form:select></td>
