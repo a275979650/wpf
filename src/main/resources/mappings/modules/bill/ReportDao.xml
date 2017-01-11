@@ -18,15 +18,19 @@
 			<if test="LABEL != null and LABEL !=''">
 				AND t.LABEL = #{LABEL}
 			</if>
+			<if test="PAY_WAY != null and PAY_WAY !=''"> AND t.PAY_WAY = #{PAY_WAY} </if>
 			<if test="BEGIN_DATE != null and BEGIN_DATE !=''">
 			  AND t.CONSUME_TIME >= TO_DATE(#{BEGIN_DATE},'yyyy-MM-dd') 
 			</if>
 			<if test="END_DATE != null and END_DATE !=''">
 			  AND t.CONSUME_TIME <![CDATA[<=]]> TO_DATE(#{END_DATE},'yyyy-MM-dd') 
 			</if>
+			<if test="NOT_STATISTICS != null and NOT_STATISTICS !=''">
+			  AND t.NOT_STATISTICS = #{NOT_STATISTICS}
+			</if>
 		</where>
 		GROUP BY to_char(t.CONSUME_TIME, 'yyyy-mm') 
-		ORDER BY to_char(t.CONSUME_TIME, 'yyyy-mm') DESC
+		ORDER BY to_char(t.CONSUME_TIME, 'yyyy-mm') ${DESC}
 	</select>
 	
 	<select id="statistical" parameterType="map" resultType="upperCaseKeyMap">

@@ -42,6 +42,7 @@ public class ReportControl extends BaseController {
     public String list(FormBean formbean, HttpServletRequest request, 
             HttpServletResponse response, Model model) {
         Map<String, Object> st3 = reportService.statistical(formbean.getBean());
+        formbean.getBean().put("DESC", "DESC");
     	Page<Map<String, Object>> page = 
     	        reportService.monthTotalList(new Page<Map<String, Object>>(request, response), formbean);
     	model.addAttribute("page", page);
