@@ -40,7 +40,6 @@ public class BillChartControl extends BaseController {
         //查询条件初始化赋值，查询登录者下参与统计数据
         formbean.getBean().put("BLONG", UserUtils.getUser().getLoginName());
         formbean.getBean().put("BLONG_NAME", UserUtils.getUser().getName());
-        formbean.getBean().put("NOT_STATISTICS", "0");
         model.addAttribute("map", formbean);
     	return "modules/bill/billChartTotal";
     }

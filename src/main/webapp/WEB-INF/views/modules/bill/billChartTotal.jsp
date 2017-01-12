@@ -19,7 +19,10 @@ $(document).ready(function() {
                 subtarget:'blank'
             },
             tooltip: {
-    	        trigger: 'axis'
+    	        trigger: 'axis',
+    	        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+    	            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+    	        }
     	    },
     	    toolbox: {
     	        feature: {
@@ -30,24 +33,20 @@ $(document).ready(function() {
     	        }
     	    },
     	    legend: {
-    	        data:['收入','支出','结余']
+    	        data:['收入','支出','结余'],itemGap: 5
     	    },
+    	    grid:{left:60},
     	    xAxis: [
     	        {
     	            type: 'category',
     	            scale: true,
-    	            data: [],
-    	            min: 'dataMin',
-    	            max: 'dataMax'
+    	            data: []
     	        }
     	    ],
     	    yAxis: [
     	        {
     	            type: 'value',
-    	            name: '金额(￥)',
-    	            min: 0,
-    	            max: 50000,
-    	            interval: 5000,
+    	            name: '',
     	            axisLabel: {
     	                formatter: '{value} '
     	            }
@@ -55,24 +54,59 @@ $(document).ready(function() {
     	        {
     	            type: 'value',
     	            name: '金额(￥)',
-    	            min: -50000,
-    	            max: 50000,
-    	            interval: 5000,
     	            axisLabel: {
     	                formatter: '{value} '
     	            }
     	        }
     	    ],
+    	    dataZoom: [
+               {
+                   type: 'slider',
+                   show: true,
+                   start: 50,
+                   end: 100,
+                   handleSize: 8
+               },
+               {
+                   type: 'inside'
+               },
+               {
+                   type: 'slider',
+                   show: true,
+                   yAxisIndex: 0,
+                   filterMode: 'empty',
+                   width:60,
+                   handleSize: 8,
+                   left: '0'
+               }
+           ],
     	    series: [
     	        {
     	            name:'收入',
     	            type:'bar',
+    	            label:{normal:{show:true,position:'top',
+    	            	formatter: function(c){return Math.round(c.value/1000);}}},
     	            //itemStyle:{normal:{color:'green'}},
     	            data: []
     	        },
     	        {
     	            name:'支出',
     	            type:'bar',
+    	            label:{normal:{show:true,position:'top',
+    	            	formatter: function(c){return Math.round(c.value/1000);}}},
+   	            	markPoint : {
+   	                    data : [
+   	                        {type : 'max', name: '最大值'},
+   	                        {type : 'min', name: '最小值'}
+   	                    ],
+	   	                label:{normal:{show:true,position:'insideTop',
+	     	            	formatter: function(c){return Math.round(c.value/1000)+"k";}}}
+   	                },
+   	                markLine : {
+   	                    data : [
+   	                        {type : 'average', name: '平均值'}
+   	                    ]
+   	                },
     	            //itemStyle:{normal:{color:'red'}},
     	            data: []
     	        },
@@ -80,6 +114,14 @@ $(document).ready(function() {
     	            name:'结余',
     	            type:'line',
     	            data: [],
+    	            label:{normal:{show:true,position:'top',
+    	            	formatter: function(c){return Math.round(c.value/1000);}}},
+   	            	markLine : {
+      	                data : [
+      	                      {name: '平衡线',yAxis: 0,lineStyle:{normal:{color:'red'}}}
+      	                ]
+      	            },
+    	            smooth:true,
     	            //itemStyle:{normal:{color:'blue'}},
     	            yAxisIndex: 1
     	        }
@@ -99,19 +141,13 @@ function getData(barChart){
     $.get('${ctx}/bill/chart/monthTotalData',$("#searchForm").serialize()).done(function (data) {
         // 填入数据
         barChart.setOption({
-            xAxis: {
-                data: data.xData
-            },
-            series: [{
-                name: '收入',
-                data: data.yIncomeData
-            },{
-                name: '支出',
-                data: data.yOutData
-            },{
-                name: '结余',
-                data: data.ySubData
-            }]
+            xAxis: {data: data.xData},
+            series: [{name: '收入',data: data.yIncomeData},
+                     {name: '支出',data: data.yOutData},
+                     {name: '结余',data: data.ySubData}],
+            dataZoom: [{startValue: data.xStartValue,endValue: data.xEndValue},
+                       {startValue: data.xStartValue,endValue: data.xEndValue},
+                       {startValue: 0,endValue: data.yEndValue}]
         });
     });
 };
@@ -161,6 +197,6 @@ function getData(barChart){
 			</tr>
 		</table>
 	</form:form>
-	<div id="monthTotal" style="width: 100%;height:500px;"></div>
+	<div id="monthTotal" style="width: 100%;height:400px;"></div>
 </body>
 </html>

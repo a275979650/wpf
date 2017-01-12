@@ -30,6 +30,7 @@ public class BillChartService extends BaseService{
         bean.put("DESC", " ");
         List<Map<String, Object>> monthList = reportDao.monthTotalList(bean);
         int length = monthList.size();
+        double yEndValue = 0.0;
         String[] xData = new String[length];
         double[] yIncomeData = new double[length];
         double[] yOutData = new double[length];
@@ -39,8 +40,19 @@ public class BillChartService extends BaseService{
             yIncomeData[i] = MapUtils.getDouble(monthList.get(i), "INCOME");
             yOutData[i] = MapUtils.getDouble(monthList.get(i), "OUTCOST");
             ySubData[i] = MapUtils.getDouble(monthList.get(i), "TOTAL");
+            if(yIncomeData[i] > yEndValue)yEndValue = yIncomeData[i];
+            if(yOutData[i] > yEndValue)yEndValue = yOutData[i];
         }
         data.put("xData", xData);
+        //设置默认显示最近一年的数据
+        if(length > 0){
+            data.put("xStartValue", length>12?xData[length-12]:xData[0]);
+            data.put("xEndValue", xData[length-1]);
+        }else{
+            data.put("xStartValue", null);
+            data.put("xEndValue", null);
+        }
+        data.put("yEndValue", yEndValue);
         data.put("yIncomeData", yIncomeData);
         data.put("yOutData", yOutData);
         data.put("ySubData", ySubData);
