@@ -45,7 +45,7 @@ public class BillControl extends BaseController {
     @RequestMapping(value = { "list", "" })
     public String list(FormBean formbean, HttpServletRequest request, 
             HttpServletResponse response, Model model) {
-        if(formbean.getBean().isEmpty()){formbean.getBean().put("CONSUME_TYPE", "1");}
+        if(formbean.getBean().isEmpty()){formbean.getBean().put("CONSUME_TYPE", "2");}
         Map<String, Object> st3 = billService.statistical(formbean.getBean());
     	Page<Map<String, Object>> page = 
     	        billService.list(new Page<Map<String, Object>>(request, response), formbean);
